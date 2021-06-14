@@ -1,7 +1,16 @@
-# This is just an example to get you started. A typical library package
-# exports the main API in this file. Note that you cannot rename this file
-# but you can remove it if you wish.
+import gin/graphics
+import gin/input
+import nimgl/glfw
 
-proc add*(x, y: int): int =
-  ## Adds two files together.
-  return x + y
+template Setup*(setupContent: untyped): untyped =
+    var w* = initGraphics()
+    initInput(w)
+    setupContent
+
+template Loop*(loopContent: untyped): untyped =
+    var running = true
+    template EndLoop(): untyped =
+        running = false
+    while running:
+        glfwPollEvents()
+        loopContent
