@@ -15,7 +15,7 @@ type
     Width*: uint
     Height*: uint
 
-proc initGraphics*(keyProc: (GLFWWindow, int32, int32, int32, int32) -> void): GLFWWindow =
+proc initGraphics*(): GLFWWindow =
   assert glfwInit()
   var window = glfwCreateWindow(800, 600, "GIN Game Window")
   assert window != nil

@@ -1,6 +1,6 @@
 import unittest
 
-import gin.game
+import gin
 
 test "setup inits gl":
     Setup:
