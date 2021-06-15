@@ -35,6 +35,16 @@
 ##  Sean Barret - for the awesome stb_image
 ##  Dan Venkitachalam - for finding some non-compliant DDS files, and patching some explicit casts
 ##  everybody at gamedev.net
+## #ifdef C2NIM
+## #  dynlib soil
+## #  cdecl
+## #  if defined(windows)
+## #    define soil "soil"
+## #  elif defined(macos)
+## #  else
+## #    define soil "soil.a"
+## #  endif
+## #endif
 ##
 
 ## *
