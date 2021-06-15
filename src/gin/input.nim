@@ -21,7 +21,6 @@ proc inputKeyProc(window: GLFWWindow, key: int32, scancode: int32,
 
 proc initInput*(window: GLFWWindow) =
     discard window.setKeyCallback(inputKeyProc)
-    window.makeContextCurrent()
     currentKeyboardState.pressedkeys = @[]
     currentKeyboardState.modifiers = 0
 

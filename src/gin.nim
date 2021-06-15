@@ -2,9 +2,15 @@ import gin/graphics
 import gin/input
 import nimgl/glfw
 
+type
+    Storage = object
+        window: GLFWWindow
+
+var internal: Storage 
+
 template Setup*(setupContent: untyped): untyped =
-    var w* = initGraphics()
-    initInput(w)
+    internal.window = initGraphics()
+    initInput(internal.window)
     setupContent
 
 template Loop*(loopContent: untyped): untyped =
@@ -13,4 +19,5 @@ template Loop*(loopContent: untyped): untyped =
         running = false
     while running:
         glfwPollEvents()
+        clearBuffer(internal.window)
         loopContent
