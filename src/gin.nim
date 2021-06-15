@@ -15,8 +15,11 @@ template Setup*(setupContent: untyped): untyped =
 
 template Loop*(loopContent: untyped): untyped =
     var running = true
-    template EndLoop(): untyped =
+    proc stopLoop(w: GLFWWindow): void {.cdecl.} =
         running = false
+    template endLoop(): untyped =
+        running = false
+    discard internal.window.setWindowCloseCallback(stopLoop)
     while running:
         glfwPollEvents()
         clearBuffer(internal.window)
