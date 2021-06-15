@@ -41,7 +41,7 @@ proc loadTexture*(image: cstring): Texture =
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST.GLint)
   var img = SOIL_load_image(image, width.addr, height.addr, c.addr, SOIL_LOAD_RGBA)
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA.GLint, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
-  if img[].int == 0:
+  if not(img.isNil):
     return
   SOIL_free_image_data(img)
   return tex
