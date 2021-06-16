@@ -1,6 +1,7 @@
 import unittest
 
 import gin
+import gin/graphics
 
 test "setup inits gl":
     Setup:
@@ -8,4 +9,8 @@ test "setup inits gl":
 
 test "main loop ends":
     Loop:
-        EndLoop
+        template update(time: cuint): untyped =
+            endLoop
+
+        template draw(time: cuint, context: GraphicsContext): untyped =
+            discard
