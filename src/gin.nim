@@ -13,7 +13,7 @@ template Game*(gameTemplates: untyped): untyped =
     var
         # internal variables for time
         newTime, frameTime, currentTime: cuint
-        dt: cuint = 167
+        dt: cuint = 17
         accumulator: cuint
         # bool to stop the loop
         running = true
@@ -37,14 +37,14 @@ template Game*(gameTemplates: untyped): untyped =
     gameTemplates
 
     # init data
-    initialize()
+    Initialize()
 
     # init the graphics device
     internalStorage.gContext = initGraphics(gInitData)
     initInput()
 
     # run the setup template from the game
-    setup()
+    Setup()
 
     # start the main loop
     while running:
@@ -60,13 +60,13 @@ template Game*(gameTemplates: untyped): untyped =
             if processEvents(): endLoop
             
             # run the update template in the game file
-            update(frameTime)
+            Update(frameTime)
 
             # frame executed
             accumulator -= dt
         
         # run the draw template in the game file
-        draw(frameTime, context)
+        Draw(frameTime, context)
 
         # finish rendering
         renderFinish()

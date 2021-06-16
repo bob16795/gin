@@ -14,19 +14,19 @@ Game:
     proc checkSinglePress(code: Scancode): bool =
         return kbState.contains(code) and not prevKbState.contains(code)
 
-    template initialize(): untyped =
-        setWindowSize(initPoint(100, 100))
+    template Initialize(): untyped =
+        # setWindowSize(initPoint(100, 100))
         setWindowName("lmao")
 
-    template setup(): untyped =
+    template Setup(): untyped =
         image = loadTexture("images/ssss.bmp")
         bg = initColor(255, 255, 255, 255)
 
-    template draw(time: cuint, context: GraphicsContext): untyped =
+    template Draw(time: cuint, context: GraphicsContext): untyped =
         clearBuffer(bg)
-        renderTexture(image, initRectangle(0, 0, 50, 50), initRectangle(0, 0, 100, 100))
+        draw(image, initRectangle(0, 0, 100, 100), initRectangle(0, 0, 100, 100))
 
-    template update(time: cuint): untyped =
+    template Update(time: cuint): untyped =
         prevKbState = kbState
         kbState = getKeyBoardState()
         if checkSinglePress(SDL_SCANCODE_ESCAPE):

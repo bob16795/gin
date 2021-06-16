@@ -50,11 +50,11 @@ proc loadTexture*(image: string): Texture =
     quit(1)
   result.texture = createTextureFromSurface(context.renderer, result.surface)
 
-proc renderTexture*(tex: var Texture, srcRect: Rectangle, destRect: Rectangle) =
+proc draw*(tex: var Texture, srcRect: Rectangle, destRect: Rectangle, angle: float32 = 0) =
   var
     src = srcRect.Rect
     dst = destRect.Rect
-  copy(context.renderer, tex.texture, addr src, addr dst)
+  copyEx(context.renderer, tex.texture, addr src, addr dst, angle, nil)
 
 proc clearBuffer*(c: Color) =
   context.renderer.setDrawColor(c.r, c.g, c.b, c.a)
@@ -70,6 +70,20 @@ proc initRectangle*(X, Y: cint, Width, Height: cint): Rectangle =
   result.Width = Width
   result.Height = Height
 
+proc initRectangle*(position, size: Point): Rectangle =
+  result.X = position.X
+  result.Y = position.Y
+  result.Width = size.X
+  result.Height = size.Y
+
+proc size*(r: Rectangle): Point =
+  result.X = r.Width
+  result.Y = r.Height
+
+proc location*(r: Rectangle): Point =
+  result.X = r.X
+  result.Y = r.Y
+
 proc initColor*(r, g, b, a: uint8): Color =
   result.r = r
   result.g = g
@@ -82,3 +96,8 @@ proc renderFinish*() =
 proc initGraphicsInitData*(): GraphicsInitData =
   result.name = "Gin Game"
   result.size = initPoint(640, 480)
+
+proc `*`*(p: Point, i: cint): Point =
+  result = p
+  result.X *= i
+  result.Y *= i
