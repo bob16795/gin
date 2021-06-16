@@ -1,4 +1,8 @@
 nimcache/
 nimblecache/
+nimbledeps/
 htmldocs/
+generated/
 examples/ginGame
+**/*.exe
+**/*.dll
