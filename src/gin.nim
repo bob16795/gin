@@ -8,18 +8,13 @@ type
 
 var internalStorage: Storage
 
-template Setup*(setupContent: untyped): untyped =
-    internalStorage.gContext = initGraphics()
-    initInput()
-    template internal: untyped =
-        internalStorage
-    setupContent
-
-template Loop*(loopTemplates: untyped): untyped =
+template Game*(gameTemplates: untyped): untyped =
     var
+        # internal variables for time
         newTime, frameTime, currentTime: cuint
         dt: cuint = 167
         accumulator: cuint
+        # bool to stop the loop
         running = true
 
     # setup stop loop to close window
@@ -33,18 +28,35 @@ template Loop*(loopTemplates: untyped): untyped =
     template deltaTime: untyped =
         frameTime
 
-    loopTemplates
+    # load templates and vars from the game file
+    gameTemplates
 
+    # init the graphics device
+    internalStorage.gContext = initGraphics()
+    initInput()
+
+    # run the setup template from the game
+    setup()
+
+    # start the main loop
     while running:
+        # update deltatime
         newTime = getTicks()
         frameTime = newTime - currentTime
         currentTime = newTime
         accumulator += frameTime
 
+        # process keyboard events
         if processEvents(): endLoop
+
+        # run update everty dt mills
         while (accumulator >= dt):
             echo "update"
             update(frameTime)
             accumulator -= dt
+        
+        # run the draw template in the game file
         draw(frameTime, context)
+
+        # finish rendering
         renderFinish()
