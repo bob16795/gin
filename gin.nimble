@@ -10,6 +10,4 @@ srcDir        = "src"
 # Dependencies
 
 requires "nim >= 1.4.8"
-requires "nimgl"
-requires "https://github.com/jyapayne/nim-glew"
-requires "https://github.com/nimgl/opengl.git"
+requires "sdl2"
