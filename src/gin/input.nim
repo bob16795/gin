@@ -1,5 +1,4 @@
 import nimgl/glfw
-import opengl
 
 type
     KeyboardState* = object
