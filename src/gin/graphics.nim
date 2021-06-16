@@ -6,8 +6,8 @@ import os
 
 type
   Point* = object
-    X*: int
-    Y*: int
+    X*: cint
+    Y*: cint
   Rectangle* = object
     X*: cint
     Y*: cint
@@ -20,8 +20,11 @@ type
     a*: uint8
 
   GraphicsContext* = object
-    window: WindowPtr
+    window*: WindowPtr
     renderer: RendererPtr
+  GraphicsInitData* = object
+    name*: string
+    size*: Point
   Texture* = object
     surface: SurfacePtr
     texture: TexturePtr
@@ -34,8 +37,8 @@ proc Rect(r: Rectangle): Rect =
   result.w = r.Width
   result.h = r.Height
 
-proc initGraphics*(): GraphicsContext =
-  result.window = createWindow("Gin Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, 0)
+proc initGraphics*(data: GraphicsInitData): GraphicsContext =
+  result.window = createWindow(data.name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, data.size.X, data.size.Y, 0)
   result.renderer = createRenderer(result.window, -1, 0)
   context = result
   return result
@@ -57,7 +60,7 @@ proc clearBuffer*(c: Color) =
   context.renderer.setDrawColor(c.r, c.g, c.b, c.a)
   context.renderer.clear()
 
-proc initPoint*(X, Y: int): Point =
+proc initPoint*(X, Y: cint): Point =
   result.X = X
   result.Y = Y
 
@@ -75,3 +78,7 @@ proc initColor*(r, g, b, a: uint8): Color =
 
 proc renderFinish*() =
   context.renderer.present()
+
+proc initGraphicsInitData*(): GraphicsInitData =
+  result.name = "Gin Game"
+  result.size = initPoint(640, 480)

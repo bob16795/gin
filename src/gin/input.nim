@@ -18,13 +18,13 @@ proc processEvents*(): bool =
             of KeyDown:
                 if not currentKeyboardState.pressedkeys.contains(e.key.keysym.scancode):
                     currentKeyboardState.pressedkeys.add(e.key.keysym.scancode)
+                    return
             of KeyUp:
-                if not currentKeyboardState.pressedkeys.contains(e.key.keysym.scancode):
-                    break
-                for i in 0..currentKeyboardState.pressedkeys.len():
-                    if (currentKeyboardState.pressedkeys[i] == e.key.keysym.scancode):
-                        currentKeyboardState.pressedkeys.del(i)
-                        break
+                if currentKeyboardState.pressedkeys.contains(e.key.keysym.scancode):
+                    for i in 0..currentKeyboardState.pressedkeys.len():
+                        if (currentKeyboardState.pressedkeys[i] == e.key.keysym.scancode):
+                            currentKeyboardState.pressedkeys.del(i)
+                            break
             else:
                 discard
 
