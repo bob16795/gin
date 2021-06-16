@@ -2,23 +2,34 @@ import sdl2
 
 type
     KeyboardState* = object
-        pressedkeys*: seq[int32]
-        modifiers*: int32
+        pressedkeys*: seq[Scancode]
+        modifiers*: Keymod
 
 var currentKeyboardState: KeyboardState
 
 # returns true if the program should end
-proc processEvent*(): bool =
+proc processEvents*(): bool =
+    currentKeyboardState.modifiers = getModState()
     var e: Event
     while pollEvent(e):
-        if e.kind == QuitEvent:
-            return true
-
-
+        case e.kind:
+            of QuitEvent:
+                return true
+            of KeyDown:
+                if not currentKeyboardState.pressedkeys.contains(e.key.keysym.scancode):
+                    currentKeyboardState.pressedkeys.add(e.key.keysym.scancode)
+            of KeyUp:
+                if not currentKeyboardState.pressedkeys.contains(e.key.keysym.scancode):
+                    break
+                for i in 0..currentKeyboardState.pressedkeys.len():
+                    if (currentKeyboardState.pressedkeys[i] == e.key.keysym.scancode):
+                        currentKeyboardState.pressedkeys.del(i)
+                        break
+            else:
+                discard
 
 proc initInput*() =
     currentKeyboardState.pressedkeys = @[]
-    currentKeyboardState.modifiers = 0
 
 proc getKeyBoardState*(): KeyboardState =
     return currentKeyboardState

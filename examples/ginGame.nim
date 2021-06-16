@@ -9,7 +9,7 @@ var prevState: KeyBoardState
 Setup:
     var
         image: Texture = loadTexture("images/ssss.bmp")
-        bg: Color = initColor(255, 0, 0, 255)
+        bg: Color = initColor(255, 255, 255, 255)
 
 Loop:
     template draw(time: cuint, context: GraphicsContext): untyped =

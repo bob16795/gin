@@ -18,8 +18,8 @@ template Setup*(setupContent: untyped): untyped =
 template Loop*(loopTemplates: untyped): untyped =
     var
         newTime, frameTime, currentTime: cuint
-        dt: float = 167
-        accumulator: float
+        dt: cuint = 167
+        accumulator: cuint
         running = true
 
     # setup stop loop to close window
@@ -41,8 +41,14 @@ template Loop*(loopTemplates: untyped): untyped =
         newTime = getTicks()
         frameTime = newTime - currentTime
         currentTime = newTime
-        if processEvent(): endLoop
-        update(frameTime)
+        accumulator += frameTime
+
+        if processEvents(): endLoop
+        while (not draw):
+            echo "update"
+            update(frameTime)
+            accumulator -= frameTime
         if (draw):
-            renderFinish()
+            echo "draw"
             draw(frameTime, context)
+            renderFinish()

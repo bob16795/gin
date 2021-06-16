@@ -74,5 +74,4 @@ proc initColor*(r, g, b, a: uint8): Color =
   result.a = a
 
 proc renderFinish*() =
-  echo "finish?"
   context.renderer.present()
