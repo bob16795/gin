@@ -21,9 +21,6 @@ template Game*(gameTemplates: untyped): untyped =
         gInitData = initGraphicsInitData()
 
     # setup stop loop to close window
-    proc stopLoop(): void {.cdecl.} =
-        running = false
-
     template endLoop(): untyped =
         running = false
     template internal: untyped =
