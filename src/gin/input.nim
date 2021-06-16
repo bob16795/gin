@@ -33,3 +33,6 @@ proc initInput*() =
 
 proc getKeyBoardState*(): KeyboardState =
     return currentKeyboardState
+
+proc contains*(state: KeyboardState, code: Scancode): bool =
+    return state.pressedkeys.contains(code)

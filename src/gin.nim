@@ -30,8 +30,6 @@ template Loop*(loopTemplates: untyped): untyped =
         running = false
     template internal: untyped =
         internalStorage
-    template draw: untyped =
-        not(accumulator >= dt)
     template deltaTime: untyped =
         frameTime
 
@@ -44,11 +42,9 @@ template Loop*(loopTemplates: untyped): untyped =
         accumulator += frameTime
 
         if processEvents(): endLoop
-        while (not draw):
+        while (accumulator >= dt):
             echo "update"
             update(frameTime)
-            accumulator -= frameTime
-        if (draw):
-            echo "draw"
-            draw(frameTime, context)
-            renderFinish()
+            accumulator -= dt
+        draw(frameTime, context)
+        renderFinish()

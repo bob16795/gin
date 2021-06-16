@@ -1,7 +1,7 @@
 import gin
 import gin/input
 import gin/graphics
-
+from sdl2 import Scancode
 
 var kbState: KeyBoardState
 var prevState: KeyBoardState
@@ -9,7 +9,7 @@ var prevState: KeyBoardState
 Setup:
     var
         image: Texture = loadTexture("images/ssss.bmp")
-        bg: Color = initColor(255, 255, 255, 255)
+        bg = initColor(255, 255, 255, 255)
 
 Loop:
     template draw(time: cuint, context: GraphicsContext): untyped =
@@ -19,5 +19,5 @@ Loop:
     template update(time: cuint): untyped =
         prevState = kbState
         kbState = getKeyBoardState()
-        if kbState.pressedkeys.contains(0):
+        if kbState.contains(SDL_SCANCODE_ESCAPE):
             endLoop
