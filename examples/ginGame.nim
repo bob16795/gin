@@ -1,18 +1,23 @@
 import gin
 import gin/input
 import gin/graphics
-import nimgl/glfw
 
 
 var kbState: KeyBoardState
 var prevState: KeyBoardState
 
 Setup:
-    var image: Texture = loadTexture("images/ssss.png", internal.shader)
+    var
+        image: Texture = loadTexture("images/ssss.bmp")
+        bg: Color = initColor(255, 0, 0, 255)
 
 Loop:
-    prevState = kbState
-    kbState = getKeyBoardState()
-    renderTexture(image, InitRectangle(2, 2, 100, 100), InitRectangle(100, 100, 1000, 1000))
-    if kbState.pressedkeys.contains(GLFWKey.ESCAPE):
-        endLoop
+    template draw(time: cuint, context: GraphicsContext): untyped =
+        clearBuffer(bg)
+        renderTexture(image, initRectangle(0, 0, 100, 100), initRectangle(0, 0, 100, 100))
+
+    template update(time: cuint): untyped =
+        prevState = kbState
+        kbState = getKeyBoardState()
+        if kbState.pressedkeys.contains(0):
+            endLoop

@@ -1,4 +1,4 @@
-import nimgl/glfw
+import sdl2
 
 type
     KeyboardState* = object
@@ -7,19 +7,16 @@ type
 
 var currentKeyboardState: KeyboardState
 
-proc inputKeyProc(window: GLFWWindow, key: int32, scancode: int32,
-                   action: int32, mods: int32): void {.cdecl.} =
-    if action == GLFWPress and not currentKeyboardState.pressedkeys.contains(key):
-        currentKeyboardState.pressedkeys.add(key)
-    if action == GLFWRelease and currentKeyboardState.pressedkeys.contains(key):
-        for i in 1..high(currentKeyboardState.pressedkeys):
-            if currentKeyboardState.pressedkeys[i] == key:
-                currentKeyboardState.pressedkeys.del(i)
-                break
-    currentKeyboardState.modifiers = mods
+# returns true if the program should end
+proc processEvent*(): bool =
+    var e: Event
+    while pollEvent(e):
+        if e.kind == QuitEvent:
+            return true
 
-proc initInput*(window: GLFWWindow) =
-    discard window.setKeyCallback(inputKeyProc)
+
+
+proc initInput*() =
     currentKeyboardState.pressedkeys = @[]
     currentKeyboardState.modifiers = 0
 

@@ -1,35 +1,30 @@
 import gin/graphics
 import gin/input
-import opengl
-import nimgl/glfw
+import sdl2
 
 type
     Storage = object
-        window: GLFWWindow
-        shader: GLuint
+        gContext: GraphicsContext
 
-var internalStorage: Storage 
+var internalStorage: Storage
 
 template Setup*(setupContent: untyped): untyped =
-    internalStorage.window = initGraphics()
-    internalStorage.shader = initShader()
-    initInput(internalStorage.window)
+    internalStorage.gContext = initGraphics()
+    initInput()
     template internal: untyped =
         internalStorage
     setupContent
 
-template Loop*(loopContent: untyped): untyped =
+template Loop*(loopTemplates: untyped): untyped =
     var
-        newTime, frameTime, currentTime: float
-        dt: float = 1 / 60
+        newTime, frameTime, currentTime: cuint
+        dt: float = 167
         accumulator: float
         running = true
 
     # setup stop loop to close window
-    proc stopLoop(w: GLFWWindow): void {.cdecl.} =
+    proc stopLoop(): void {.cdecl.} =
         running = false
-    discard internalStorage.window.setWindowCloseCallback(stopLoop)
-
 
     template endLoop(): untyped =
         running = false
@@ -40,15 +35,14 @@ template Loop*(loopContent: untyped): untyped =
     template deltaTime: untyped =
         frameTime
 
+    loopTemplates
+
     while running:
-        newTime = glfwGetTime()
+        newTime = getTicks()
         frameTime = newTime - currentTime
         currentTime = newTime
-
+        if processEvent(): endLoop
+        update(frameTime)
         if (draw):
-            clearBuffer(internalStorage.window)
-            renderStart(internalStorage.shader)
-            glfwPollEvents()
-        loopContent
-        if (draw):
-            renderFinish(internalStorage.window)
+            renderFinish()
+            draw(frameTime, context)
