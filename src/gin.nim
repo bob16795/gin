@@ -1,6 +1,7 @@
 import gin/graphics
 import gin/input
 import gin/templates
+import gin/sound
 import sdl2
 
 type
@@ -39,6 +40,7 @@ template Game*(gameTemplates: untyped): untyped =
     # init the graphics device
     internalStorage.gContext = initGraphics(gInitData)
     initInput()
+    initSound()
 
     # run the setup template from the game
     Setup()
@@ -57,7 +59,7 @@ template Game*(gameTemplates: untyped): untyped =
             if processEvents(): endLoop
             
             # run the update template in the game file
-            Update(frameTime)
+            Update(dt)
 
             # frame executed
             accumulator -= dt
