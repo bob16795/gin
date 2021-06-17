@@ -3,6 +3,7 @@
 # for drawing in gin
 import sdl2
 import os
+import math
 
 type
   Point* = object
@@ -101,3 +102,12 @@ proc `*`*(p: Point, i: cint): Point =
   result = p
   result.X *= i
   result.Y *= i
+
+proc center*(r: Rectangle): Point =
+  return initPoint(r.X + (r.Width / 2).cint, r.Y + (r.Height / 2).cint)
+
+proc distance*(a, b: Point): float =
+  var c: Point
+  c.X = a.X - b.X
+  c.Y = a.Y - b.Y
+  return sqrt((c.X * c.X + c.Y * c.Y).float)
