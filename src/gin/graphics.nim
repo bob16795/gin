@@ -125,8 +125,10 @@ proc distance*(a, b: Point): float =
 proc renderText*(face: FontFace, pos: Point,text: string, fgc, bgc: Color) =
   var
     fg = sdl2.color(fgc.r, fgc.g, fgc.b, fgc.a)
-    bg = sdl2.color(bgc.r, bgc.g, bgc.b, bgc.a)
+    bg = sdl2.color(bgc.r, bgc.g, bgc.b, 0)
     surface = renderText(face.fnt, text, fg, bg)
+  discard surface.setSurfaceAlphaMod(bg.a)
+  var
     texture = context.renderer.createTextureFromSurface(surface)
     tw, th: cint
   discard face.fnt.sizeText(text, addr tw, addr th)
