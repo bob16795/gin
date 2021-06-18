@@ -2,6 +2,7 @@
 # this will store data types and processes
 # for drawing in gin
 import sdl2
+import sdl2/ttf
 import os
 import math
 
@@ -19,6 +20,10 @@ type
     g*: uint8
     b*: uint8
     a*: uint8
+  FontFace* = object
+    fnt*: FontPtr
+    size*: cint
+
 
   GraphicsContext* = object
     window*: WindowPtr
@@ -42,6 +47,7 @@ proc initGraphics*(data: GraphicsInitData): GraphicsContext =
   result.window = createWindow(data.name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, data.size.X, data.size.Y, 0)
   result.renderer = createRenderer(result.window, -1, 0)
   context = result
+  ttfInit()
   return result
 
 proc loadTexture*(image: string): Texture =
@@ -115,3 +121,20 @@ proc distance*(a, b: Point): float =
   c.X = a.X - b.X
   c.Y = a.Y - b.Y
   return sqrt((c.X * c.X + c.Y * c.Y).float)
+
+proc renderText*(face: FontFace, pos: Point,text: string, fgc, bgc: Color) =
+  var
+    fg = sdl2.color(fgc.r, fgc.g, fgc.b, fgc.a)
+    bg = sdl2.color(bgc.r, bgc.g, bgc.b, bgc.a)
+    surface = renderText(face.fnt, text, fg, bg)
+    texture = context.renderer.createTextureFromSurface(surface)
+    tw, th: cint
+  discard face.fnt.sizeText(text, addr tw, addr th)
+  var
+    srcr = initRectangle(0, 0, tw, th).Rect
+    dstr = initRectangle(pos, initPoint(tw, th)).Rect
+  copy(context.renderer, texture, addr srcr, addr dstr)
+
+proc initFontFace*(name: string, size: cint): FontFace =
+  result.fnt = openFont(getAppDir() / name, size)
+  result.size = size
