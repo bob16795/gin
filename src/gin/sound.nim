@@ -1,6 +1,7 @@
 import sdl2
 import sdl2/audio
 import os
+import storage
 
 type
     SoundEffect* = object
@@ -17,7 +18,7 @@ proc initSoundEffect*(path: string): SoundEffect =
         spec: AudioSpec
         length: uint32
         buffer: ptr uint8
-    discard loadWAV(getAppDir() / path, addr spec, addr buffer, addr length)
+    discard loadWAV(getFullFilePath(path), addr spec, addr buffer, addr length)
     result.spec = spec
     result.length = length
     result.buffer = buffer

@@ -5,6 +5,7 @@ import sdl2
 import sdl2/ttf
 import os
 import math
+import storage
 
 type
   Point* = object
@@ -51,7 +52,7 @@ proc initGraphics*(data: GraphicsInitData): GraphicsContext =
   return result
 
 proc loadTexture*(image: string): Texture =
-  result.surface = loadBMP(getAppDir() / image)
+  result.surface = loadBMP(getFullFilePath(image))
   if result.surface == nil:
     echo "Failed to load image " & image
     quit(1)
@@ -142,5 +143,5 @@ proc sizeText*(face: FontFace,text: string): Point =
   return initPoint(tw, th)
 
 proc initFontFace*(name: string, size: cint): FontFace =
-  result.fnt = openFont(getAppDir() / name, size)
+  result.fnt = openFont(getFullFilePath(name), size)
   result.size = size
