@@ -135,7 +135,7 @@ proc renderText*(face: FontFace, pos: Point,text: string, fgc: Color) =
     dstr = initRectangle(pos, initPoint(tw, th)).Rect
   copy(context.renderer, texture, addr srcr, addr dstr)
 
-proc sizeText*(face: FontFace, pos: Point,text: string, fgc: Color): Point =
+proc sizeText*(face: FontFace,text: string): Point =
   var
     tw, th: cint
   discard face.fnt.sizeText(text, addr tw, addr th)
