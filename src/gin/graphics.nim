@@ -122,7 +122,7 @@ proc distance*(a, b: Point): float =
   c.Y = a.Y - b.Y
   return sqrt((c.X * c.X + c.Y * c.Y).float)
 
-proc renderText*(face: FontFace, pos: Point,text: string, fgc) =
+proc renderText*(face: FontFace, pos: Point,text: string, fgc: Color) =
   var
     fg = sdl2.color(fgc.r, fgc.g, fgc.b, fgc.a)
     surface = renderTextBlended(face.fnt, text, fg)
