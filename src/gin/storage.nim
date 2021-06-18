@@ -4,7 +4,7 @@ import strutils
 var APPNAME: string
 
 proc getStorageDir*(): string =
-    return getStorageDir() / APPNAME
+    return getConfigDir() / APPNAME
 
 proc getFullFilePath*(file: string): string =
     if not file.contains("://"):

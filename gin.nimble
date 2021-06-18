@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.0.1"
+version       = "0.0.2"
 author        = "bob16795"
 description   = "A game engin written in nim"
 license       = "MIT"
