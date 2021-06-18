@@ -1,11 +1,10 @@
 # Package
 
-version       = "0.0.2"
+version       = "0.0.1"
 author        = "bob16795"
 description   = "A game engin written in nim"
 license       = "MIT"
 srcDir        = "src"
-bin           = @["gin"]
 
 
 # Dependencies
