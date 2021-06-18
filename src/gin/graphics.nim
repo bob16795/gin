@@ -85,6 +85,10 @@ proc location*(r: Rectangle): Point =
   result.X = r.X
   result.Y = r.Y
 
+proc `location=`*(r: var Rectangle, p: Point) =
+  r.X = p.X
+  r.Y = p.Y
+
 proc initColor*(r, g, b, a: uint8): Color =
   result.r = r
   result.g = g
