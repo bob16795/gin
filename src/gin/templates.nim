@@ -1,4 +1,5 @@
 import gin/graphics
+import gin/storage
 
 template WindowTemplates*(context: GraphicsContext, data: GraphicsInitData): untyped =
 
@@ -7,5 +8,9 @@ template WindowTemplates*(context: GraphicsContext, data: GraphicsInitData): unt
         data.name = d
         
     # set the window size
-    template setWindowSize(d: Point): untyped =
-        data.size = d
+    template setWindowSize(size: Point): untyped =
+        data.size = size
+
+    # set the app name IMPORTANT !!!
+    template setAppName(name: string): untyped =
+        storage.APPNAME = name

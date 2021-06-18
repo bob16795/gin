@@ -1,7 +1,7 @@
 import os
 import strutils
 
-var APPNAME: string
+var APPNAME*: string
 
 proc getStorageDir*(): string =
     return getConfigDir() / APPNAME
