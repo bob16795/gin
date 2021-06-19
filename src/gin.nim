@@ -69,3 +69,4 @@ template Game*(gameTemplates: untyped): untyped =
 
         # finish rendering
         renderFinish()
+    Close()
