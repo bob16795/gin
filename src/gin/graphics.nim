@@ -148,3 +148,6 @@ proc sizeText*(face: FontFace,text: string): Point =
 proc initFontFace*(name: string, size: cint): FontFace =
   result.fnt = openFont(getFullFilePath(name), size)
   result.size = size
+
+proc `+`*(A, B: Point): Point =
+  return initPoint(A.X + B.X, A.Y + B.Y)
