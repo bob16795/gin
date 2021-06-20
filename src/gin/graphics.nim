@@ -124,17 +124,18 @@ proc distance*(a, b: Point): float =
   return sqrt((c.X * c.X + c.Y * c.Y).float)
 
 proc renderText*(face: FontFace, pos: Point,text: string, fgc: Color) =
-  var
-    fg = sdl2.color(fgc.r, fgc.g, fgc.b, fgc.a)
-    surface = renderTextBlended(face.fnt, text, fg)
-  var
-    texture = context.renderer.createTextureFromSurface(surface)
-    tw, th: cint
-  discard face.fnt.sizeText(text, addr tw, addr th)
-  var
-    srcr = initRectangle(0, 0, tw, th).Rect
-    dstr = initRectangle(pos, initPoint(tw, th)).Rect
-  copy(context.renderer, texture, addr srcr, addr dstr)
+  try:
+    var
+      fg = sdl2.color(fgc.r, fgc.g, fgc.b, fgc.a)
+      surface = renderTextBlended(face.fnt, text, fg)
+      texture = context.renderer.createTextureFromSurface(surface)
+      tw, th: cint
+    discard face.fnt.sizeText(text, addr tw, addr th)
+    var
+      srcr = initRectangle(0, 0, tw, th).Rect
+      dstr = initRectangle(pos, initPoint(tw, th)).Rect
+    copy(context.renderer, texture, addr srcr, addr dstr)
+  except: echo ":("
 
 proc sizeText*(face: FontFace,text: string): Point =
   var
