@@ -57,6 +57,7 @@ proc loadTexture*(image: string): Texture =
     echo "Failed to load image " & image
     quit(1)
   result.texture = createTextureFromSurface(context.renderer, result.surface)
+  freeSurface(result.surface)
 
 proc draw*(tex: var Texture, srcRect: Rectangle, destRect: Rectangle, angle: float32 = 0) =
   var
@@ -135,6 +136,7 @@ proc renderText*(face: FontFace, pos: Point,text: string, fgc: Color) =
       srcr = initRectangle(0, 0, tw, th).Rect
       dstr = initRectangle(pos, initPoint(tw, th)).Rect
     copy(context.renderer, texture, addr srcr, addr dstr)
+    freeSurface(surface)
   except: echo ":("
 
 proc sizeText*(face: FontFace,text: string): Point =
