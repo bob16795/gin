@@ -137,6 +137,7 @@ proc renderText*(face: FontFace, pos: Point,text: string, fgc: Color) =
       dstr = initRectangle(pos, initPoint(tw, th)).Rect
     copy(context.renderer, texture, addr srcr, addr dstr)
     freeSurface(surface)
+    destroy(texture)
   except: echo ":("
 
 proc sizeText*(face: FontFace,text: string): Point =
