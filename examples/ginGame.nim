@@ -19,7 +19,7 @@ Game:
         setWindowName("lmao")
 
     template Setup(): untyped =
-        image = loadTexture("images/ssss.bmp")
+        image = loadTexture("content://ssss.bmp")
         bg = initColor(255, 255, 255, 255)
 
     template Draw(time: cuint, context: GraphicsContext): untyped =
@@ -31,3 +31,5 @@ Game:
         kbState = getKeyBoardState()
         if checkSinglePress(SDL_SCANCODE_ESCAPE):
             endLoop
+
+    template Close(): untyped = discard

@@ -33,7 +33,6 @@ type
     name*: string
     size*: Point
   Texture* = object
-    surface: SurfacePtr
     texture: TexturePtr
 
 var context*: GraphicsContext
@@ -52,12 +51,12 @@ proc initGraphics*(data: GraphicsInitData): GraphicsContext =
   return result
 
 proc loadTexture*(image: string): Texture =
-  result.surface = loadBMP(getFullFilePath(image))
-  if result.surface == nil:
+  var surface = loadBMP(getFullFilePath(image))
+  if surface == nil:
     echo "Failed to load image " & image
     quit(1)
-  result.texture = createTextureFromSurface(context.renderer, result.surface)
-  freeSurface(result.surface)
+  result.texture = createTextureFromSurface(context.renderer, surface)
+  freeSurface(surface)
 
 proc draw*(tex: var Texture, srcRect: Rectangle, destRect: Rectangle, angle: float32 = 0) =
   var
