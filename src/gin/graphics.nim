@@ -158,3 +158,6 @@ proc initFontFace*(name: string, size: cint): FontFace =
 
 proc `+`*(A, B: Point): Point =
   return initPoint(A.X + B.X, A.Y + B.Y)
+
+proc `-`*(A, B: Point): Point =
+  return initPoint(A.X - B.X, A.Y - B.Y)
