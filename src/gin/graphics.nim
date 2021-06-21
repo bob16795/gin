@@ -61,10 +61,9 @@ proc draw*(tex: var Texture, srcRect: Rectangle, destRect: Rectangle, c: graphic
   var
     src = srcRect.Rect
     dst = destRect.Rect
-  var lol = tex.texture[]
-  discard setTextureColorMod(addr lol, c.r, c.g, c.b)
-  copyEx(context.renderer, addr lol, addr src, addr dst, angle, nil)
-  destroy(addr lol)
+  discard setTextureColorMod(tex.texture, c.r, c.g, c.b)
+  copyEx(context.renderer, tex.texture, addr src, addr dst, angle, nil)
+  discard setTextureColorMod(tex.texture, 255, 255, 255)
 
 proc draw*(tex: var Texture, srcRect: Rectangle, destRect: Rectangle, angle: float32 = 0) =
   var
