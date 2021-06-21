@@ -3,7 +3,6 @@
 # for drawing in gin
 import sdl2
 import sdl2/ttf
-import os
 import math
 import storage
 
@@ -57,6 +56,15 @@ proc loadTexture*(image: string): Texture =
     quit(1)
   result.texture = createTextureFromSurface(context.renderer, surface)
   freeSurface(surface)
+
+proc draw*(tex: var Texture, srcRect: Rectangle, destRect: Rectangle, c: graphics.Color, angle: float32 = 0) =
+  var
+    src = srcRect.Rect
+    dst = destRect.Rect
+  var lol = tex
+  discard setTextureColorMod(lol.texture, c.r, c.g, c.b)
+  copyEx(context.renderer, lol.texture, addr src, addr dst, angle, nil)
+  destroy(lol.texture)
 
 proc draw*(tex: var Texture, srcRect: Rectangle, destRect: Rectangle, angle: float32 = 0) =
   var
