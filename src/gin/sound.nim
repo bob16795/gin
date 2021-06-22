@@ -41,7 +41,8 @@ proc initSoundEffect*(path: string): SoundEffect =
     spec.callback = callback
     result.length = length
     result.buffer = buffer
-    audioDevice = openAudioDevice(nil, 0, addr result.spec, nil, 0)
+    if audioDevice == nil:
+        audioDevice = openAudioDevice(nil, 0, addr result.spec, nil, 0)
 
 
 proc play*(effect: SoundEffect) =
