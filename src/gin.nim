@@ -28,7 +28,9 @@ template Game*(gameTemplates: untyped): untyped =
         internalStorage
     template deltaTime: untyped =
         frameTime
-    
+    template setDt(value: int): untyped =
+        dt = value
+
     WindowTemplates(context, gInitData)
 
     # load templates and vars from the game file
