@@ -8,10 +8,12 @@ type
         spec: AudioSpec
         length: uint32
         buffer: ptr uint8
-        audioDevice: AudioDeviceID
     AudioData = object
         length: uint32
         position: ptr uint8
+
+var 
+    audioDevice: AudioDeviceID
 
 proc initSound*() =
     init(INIT_AUDIO)
@@ -39,12 +41,12 @@ proc initSoundEffect*(path: string): SoundEffect =
     spec.callback = callback
     result.length = length
     result.buffer = buffer
-    result.audioDevice = openAudioDevice(nil, 0, addr result.spec, nil, 0)
+    audioDevice = openAudioDevice(nil, 0, addr result.spec, nil, 0)
 
 
 proc play*(effect: SoundEffect) =
-    var success = queueAudio(effect.audioDevice, effect.buffer, effect.length)
-    pauseAudioDevice(effect.audioDevice, 0)
+    var success = queueAudio(audioDevice, effect.buffer, effect.length)
+    pauseAudioDevice(audioDevice, 0)
 
 proc pause*(effect: SoundEffect) =
-    pauseAudioDevice(effect.audioDevice, 1)
+    pauseAudioDevice(audioDevice, 1)
