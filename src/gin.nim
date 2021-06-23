@@ -42,7 +42,7 @@ template Game*(gameTemplates: untyped): untyped =
     # init the graphics device
     internalStorage.gContext = initGraphics(gInitData)
     initInput()
-    initSound()
+    initAudio()
 
     # run the setup template from the game
     Setup()
