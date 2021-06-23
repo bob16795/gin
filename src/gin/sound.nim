@@ -95,7 +95,7 @@ proc freeAudio*(a: ptr Audio) =
             freeWAV(audio.bufferTrue)
         temp = audio
         audio = audio.next
-        discard temp.free
+        #discard temp.free
 
 proc createAudio*(filename: cstring, loop: uint8, volume: cint): ptr Audio =
     var newAudio: ptr Audio = cast[ptr Audio](alloc(sizeof(Audio)))
