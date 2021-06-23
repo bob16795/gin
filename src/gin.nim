@@ -39,7 +39,9 @@ template Game*(gameTemplates: untyped): untyped =
     # init data
     Initialize()
 
-    init(INIT_AUDIO)
+    if sdl2.init(INIT_AUDIO) != SdlSuccess:
+        quit "failed to init SDL2!"
+
     # init the graphics device
     internalStorage.gContext = initGraphics(gInitData)
     initInput()
