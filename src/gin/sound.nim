@@ -114,7 +114,6 @@ proc createAudio*(filename: cstring, loop: uint8, volume: cint): ptr Audio =
         echo "wav couldnt be loaded: " & $filename
         discard newAudio.free
         return nil
-    
     newAudio.buffer = newAudio.bufferTrue
     newAudio.length = newAudio.lengthTrue
     newAudio.audio.callback = nil
@@ -189,7 +188,7 @@ proc audioCallback(userdata: pointer, stream: ptr uint8, len: cint) {.cdecl.} =
                 else:
                     tempLength = cast[uint32](len)
             mixAudioFormat(stream, audio.buffer, AUDIO_FORMAT, tempLength, audio.volume.cint)
-            audio.buffer[] += tempLength.uint8
+            audio.buffer = cast[ptr uint8](cast[int](audio.buffer) + tempLength.int)
             audio.length -= tempLength
             previous = audio
             audio = audio.next
