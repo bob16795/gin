@@ -10,7 +10,7 @@ const
     AUDIO_SAMPLES = 4096
     AUDIO_MAX_SOUNDS = 25
     AUDIO_MUSIC_FADE_VALUE = 2
-    SDL_AUDIO_ALLOW_CHANGES = SDL_AUDIO_ALLOW_ANY_CHANGE
+    AUDIO_ALLOW_CHANGES = SDL_AUDIO_ALLOW_FREQUENCY_CHANGE or SDL_AUDIO_ALLOW_CHANNELS_CHANGE
 
 type
     PrivateAudioDevice* = object
@@ -65,7 +65,7 @@ proc initAudio*() =
         return
     global.buffer = nil
     global.next = nil
-    gDevice.device = openAudioDevice(nil, 0, addr(gDevice.want), nil, SDL_AUDIO_ALLOW_CHANGES)
+    gDevice.device = openAudioDevice(nil, 0, addr(gDevice.want), nil, AUDIO_ALLOW_CHANGES)
     if gDevice.device == 0:
         echo "cant open audio dev"
         return
