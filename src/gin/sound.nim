@@ -17,7 +17,7 @@ type
         device*: AudioDeviceID
         want*: AudioSpec
         audioEnable*: uint8
-    Audio* = object
+    Audio* {.bycopy.} = object
         length*: uint32
         lengthTrue*: uint32
         bufferTrue*: ptr uint8
@@ -52,6 +52,7 @@ proc initAudio*() =
     if gDevice == nil:
         echo "AUDIO COULDNT BE LOADED"
         return
+    zeroMem(addr gDevice.want, sizeof(gDevice.want))
     gDevice.want.freq = AUDIO_FREQ
     gDevice.want.format = AUDIO_FORMAT
     gDevice.want.channels = AUDIO_CHANNELS
@@ -60,11 +61,13 @@ proc initAudio*() =
     gDevice.want.userdata = alloc(sizeof(Audio))
     global = cast[ptr Audio](gDevice.want.userdata)
     if global == nil:
+        echo ":|"
         return
     global.buffer = nil
     global.next = nil
     gDevice.device = openAudioDevice(nil, 0, addr(gDevice.want), nil, SDL_AUDIO_ALLOW_CHANGES)
     if gDevice.device == 0:
+        echo "cant open audio dev"
         return
     else:
         gDevice.audioEnable = 1
@@ -108,7 +111,7 @@ proc createAudio*(filename: cstring, loop: uint8, volume: cint): ptr Audio =
     newAudio.free = 1
     newAudio.volume = volume.uint8
     if loadWav($filename, addr newAudio.audio, addr newAudio.bufferTrue, addr newAudio.lengthTrue) == nil:
-        echo "wav couldnt be loaded"
+        echo "wav couldnt be loaded: " & $filename
         discard newAudio.free
         return nil
     
@@ -130,7 +133,8 @@ proc playAudio(filename: cstring, audio: ptr Audio, loop: uint8, volume: cint) =
     if filename != nil:
         newAudio = createAudio(filename, loop, volume)
     elif audio != nil:
-        newAudio[] = audio[]
+        newAudio = cast[ptr Audio](alloc(sizeof(Audio)))
+        copyMem(newAudio, audio, sizeof(Audio))
         newAudio.volume = volume.uint8
         newAudio.loop = loop
         newAudio.free = 0
