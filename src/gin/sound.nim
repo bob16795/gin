@@ -5,7 +5,7 @@ import sdl2
 
 const
     AUDIO_FORMAT = AUDIO_S16LSB
-    AUDIO_FREQ = 48000
+    AUDIO_FREQ = 44100
     AUDIO_CHANNELS = 2
     AUDIO_SAMPLES = 4096
     AUDIO_MAX_SOUNDS = 25
@@ -95,7 +95,7 @@ proc freeAudio*(a: ptr Audio) =
             freeWAV(audio.bufferTrue)
         temp = audio
         audio = audio.next
-        #discard temp.free
+        discard temp.free
 
 proc createAudio*(filename: cstring, loop: uint8, volume: cint): ptr Audio =
     var newAudio: ptr Audio = cast[ptr Audio](alloc(sizeof(Audio)))
