@@ -60,6 +60,7 @@ template Game*(gameTemplates: untyped): untyped =
             pc = perc
         template setStatus(status: string): untyped =
             loadStatus = status
+            await sleepAsync(100)
         Setup()
 
     var fut = setupProcthing()
