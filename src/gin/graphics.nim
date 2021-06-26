@@ -21,10 +21,9 @@ type
     b*: uint8
     a*: uint8
   FontFace* = object
+    valid*: bool
     fnt*: FontPtr
     size*: cint
-
-
   GraphicsContext* = object
     window*: WindowPtr
     renderer: RendererPtr
@@ -130,7 +129,7 @@ proc distance*(a, b: Point): float =
   c.Y = a.Y - b.Y
   return sqrt((c.X * c.X + c.Y * c.Y).float)
 
-proc renderText*(face: FontFace, pos: Point,text: string, fgc: Color) =
+proc renderText*(face: FontFace, pos: Point, text: string, fgc: Color) =
   try:
     var
       fg = sdl2.color(fgc.r, fgc.g, fgc.b, fgc.a)
@@ -155,9 +154,20 @@ proc sizeText*(face: FontFace,text: string): Point =
 proc initFontFace*(name: string, size: cint): FontFace =
   result.fnt = openFont(getFullFilePath(name), size)
   result.size = size
+  result.valid = true
 
 proc `+`*(A, B: Point): Point =
   return initPoint(A.X + B.X, A.Y + B.Y)
 
 proc `-`*(A, B: Point): Point =
   return initPoint(A.X - B.X, A.Y - B.Y)
+
+proc drawOutline*(r: Rectangle, c: Color) =
+    var rect = r.Rect
+    setDrawColor(context.renderer, c.r, c.g, c.b, c.a)
+    drawRect(context.renderer, rect)
+
+proc drawFill*(r: Rectangle, c: Color) =
+    var rect = r.Rect
+    setDrawColor(context.renderer, c.r, c.g, c.b, c.a)
+    fillRect(context.renderer, rect)

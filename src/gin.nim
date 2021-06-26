@@ -3,12 +3,16 @@ import gin/input
 import gin/templates
 import gin/sound
 import sdl2
+import asyncdispatch
+export asyncdispatch
 
 type
     Storage = object
         gContext: GraphicsContext
 
 var internalStorage: Storage
+
+
 
 template Game*(gameTemplates: untyped): untyped =
     var
@@ -20,6 +24,9 @@ template Game*(gameTemplates: untyped): untyped =
         running = true
         # graphics init data
         gInitData = initGraphicsInitData()
+        # percent loaded
+        pc {.global.}: float = 0
+        loadStatus: string = "Loading"
 
     # setup stop loop to close window
     template endLoop(): untyped =
@@ -48,7 +55,19 @@ template Game*(gameTemplates: untyped): untyped =
     initAudio()
 
     # run the setup template from the game
-    Setup()
+    proc setupProcthing() {.async.} =
+        template setPercent(perc: float): untyped =
+            pc = perc
+        template setStatus(status: string): untyped =
+            loadStatus = status
+        Setup()
+
+    var fut = setupProcthing()
+    while not fut.finished and running:
+        if processQuitEvents(): endLoop
+        drawLoading(pc, loadStatus)
+        renderFinish()
+        poll()
 
     # start the main loop
     while running:

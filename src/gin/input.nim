@@ -13,6 +13,15 @@ var currentKeyboardState: KeyboardState
 var currentMouseState: MouseState
 
 # returns true if the program should end
+proc processQuitEvents*(): bool =
+    var e: Event
+    while pollEvent(e):
+        case e.kind:
+            of QuitEvent:
+                return true
+            else:
+                discard
+
 proc processEvents*(): bool =
     currentKeyboardState.modifiers = getModState()
     var e: Event
