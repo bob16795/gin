@@ -3,6 +3,7 @@ import gin/input
 import gin/templates
 import gin/sound
 import sdl2
+import os
 import asyncdispatch
 export asyncdispatch
 
@@ -51,7 +52,7 @@ template Game*(gameTemplates: untyped): untyped =
 
     # init the graphics device
     internalStorage.gContext = initGraphics(gInitData)
-    initInput()
+    initInput(gInitData)
     initAudio()
 
     # run the setup template from the game
@@ -60,16 +61,17 @@ template Game*(gameTemplates: untyped): untyped =
             pc = perc
         template setStatus(status: string): untyped =
             loadStatus = status
-            await sleepAsync(10)
         Setup()
-
-    var fut = setupProcthing()
-    while not fut.finished and running:
-        if processQuitEvents(): endLoop
-        drawLoading(pc, loadStatus)
-        renderFinish()
-        poll()
-
+        endLoop()
+    
+    asyncCheck setupProcthing()
+    while running:
+      poll()
+      if processQuitEvents(): endLoop
+      drawLoading(pc, loadStatus)
+      renderFinish()
+    
+    running = true
     # start the main loop
     while running:
         # update deltatime
@@ -79,15 +81,14 @@ template Game*(gameTemplates: untyped): untyped =
         accumulator += frameTime
 
         # run update everty dt mills
-        while (accumulator >= dt):
-            # process keyboard events
-            if processEvents(): endLoop
-            
-            # run the update template in the game file
-            Update(dt)
+        # process keyboard events
+        if processEvents(): endLoop
+        
+        # run the update template in the game file
+        Update(accumulator)
 
-            # frame executed
-            accumulator -= dt
+        # frame executed
+        accumulator = 0
         
         # run the draw template in the game file
         Draw(frameTime, context)

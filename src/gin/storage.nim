@@ -1,5 +1,6 @@
 import os
 import strutils
+import strformat
 
 var APPNAME*: string
 
@@ -8,7 +9,7 @@ proc getStorageDir*(): string =
 
 proc getFullFilePath*(file: string): string =
     if not file.contains("://"):
-        echo "BAD PATH: file"
+        echo &"BAD PATH: {file}"
         quit(1)
     case file.split("://")[0]:
     of "cont", "content":

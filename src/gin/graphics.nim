@@ -6,6 +6,7 @@ import sdl2/ttf
 import math
 import storage
 
+
 type
   Point* = object
     X*: cint
@@ -33,7 +34,8 @@ type
   Texture* = object
     texture: TexturePtr
 
-var context*: GraphicsContext
+var
+  context*: GraphicsContext
 
 proc Rect(r: Rectangle): Rect =
   result.x = r.X
@@ -42,8 +44,10 @@ proc Rect(r: Rectangle): Rect =
   result.h = r.Height
 
 proc initGraphics*(data: GraphicsInitData): GraphicsContext =
-  result.window = createWindow(data.name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, data.size.X, data.size.Y, 0)
+  result.window = createWindow(data.name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, data.size.X, data.size.Y, SDL_WINDOW_RESIZABLE)
+
   result.renderer = createRenderer(result.window, -1, 0)
+  discard setDrawBlendMode(result.renderer, BLENDMODE_BLEND);
   context = result
   ttfInit()
   return result
@@ -94,6 +98,12 @@ proc size*(r: Rectangle): Point =
   result.X = r.Width
   result.Y = r.Height
 
+proc offset*(r: Rectangle, offset: Point): Rectangle =
+  result.X = r.X + offset.X
+  result.Y = r.Y + offset.Y
+  result.Width = r.Width
+  result.Height = r.Height
+
 proc location*(r: Rectangle): Point =
   result.X = r.X
   result.Y = r.Y
@@ -119,6 +129,11 @@ proc `*`*(p: Point, i: cint): Point =
   result = p
   result.X *= i
   result.Y *= i
+
+proc `/`*(p: Point, i: cint): Point =
+  result = p
+  result.X = (result.X / i).cint
+  result.Y = (result.Y / i).cint
 
 proc center*(r: Rectangle): Point =
   return initPoint(r.X + (r.Width / 2).cint, r.Y + (r.Height / 2).cint)
@@ -163,11 +178,22 @@ proc `-`*(A, B: Point): Point =
   return initPoint(A.X - B.X, A.Y - B.Y)
 
 proc drawOutline*(r: Rectangle, c: Color) =
-    var rect = r.Rect
-    setDrawColor(context.renderer, c.r, c.g, c.b, c.a)
-    drawRect(context.renderer, rect)
+  var rect = r.Rect
+  setDrawColor(context.renderer, c.r, c.g, c.b, c.a)
+  drawRect(context.renderer, rect)
 
 proc drawFill*(r: Rectangle, c: Color) =
-    var rect = r.Rect
-    setDrawColor(context.renderer, c.r, c.g, c.b, c.a)
-    fillRect(context.renderer, rect)
+  var rect = r.Rect
+  setDrawColor(context.renderer, c.r, c.g, c.b, c.a)
+  fillRect(context.renderer, rect)
+
+proc angle*(p: Point): float32 =
+  return arctan2(p.X.float32, p.Y.float32)
+
+proc setAngle*(p: var Point, radians: float32) =
+  p.X = cos(radians).cint
+  p.Y = sin(radians).cint
+
+proc rotated*(p: Point; phi: float32): Point =
+  result.setAngle(phi + p.angle)
+  result = result * p.distance(initPoint(0, 0)).cint
