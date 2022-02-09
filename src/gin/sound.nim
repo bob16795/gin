@@ -114,6 +114,8 @@ proc createAudio*(filename: cstring, loop: uint8, volume: cint): ptr Audio =
         echo "wav couldnt be loaded: " & $filename
         discard newAudio.free
         return nil
+    when defined(GinDebug):
+      echo "loaded " & $filename
     newAudio.buffer = newAudio.bufferTrue
     newAudio.length = newAudio.lengthTrue
     newAudio.audio.callback = nil

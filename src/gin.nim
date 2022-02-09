@@ -16,6 +16,7 @@ var internalStorage: Storage
 
 
 template Game*(gameTemplates: untyped): untyped =
+  proc main() =
     var
         # internal variables for time
         newTime, frameTime, currentTime: cuint
@@ -56,39 +57,31 @@ template Game*(gameTemplates: untyped): untyped =
     initAudio()
 
     # run the setup template from the game
-    proc setupProcthing() {.async.} =
-        template setPercent(perc: float): untyped =
-            pc = perc
-        template setStatus(status: string): untyped =
-            loadStatus = status
-        Setup()
-        endLoop()
+    template setPercent(perc: float): untyped =
+        pc = perc
+        if processQuitEvents(): endLoop
+        drawLoading(pc, loadStatus)
+        renderFinish()
+    template setStatus(status: string): untyped =
+        loadStatus = status
+        if processQuitEvents(): endLoop
+        drawLoading(pc, loadStatus)
+        renderFinish()
+    Setup()
     
-    asyncCheck setupProcthing()
-    while running:
-      poll()
-      if processQuitEvents(): endLoop
-      drawLoading(pc, loadStatus)
-      renderFinish()
-    
-    running = true
     # start the main loop
     while running:
         # update deltatime
         newTime = getTicks()
         frameTime = newTime - currentTime
         currentTime = newTime
-        accumulator += frameTime
 
         # run update everty dt mills
         # process keyboard events
         if processEvents(): endLoop
         
         # run the update template in the game file
-        Update(accumulator)
-
-        # frame executed
-        accumulator = 0
+        Update(frameTime)
         
         # run the draw template in the game file
         Draw(frameTime, context)
@@ -96,3 +89,4 @@ template Game*(gameTemplates: untyped): untyped =
         # finish rendering
         renderFinish()
     Close()
+  main()

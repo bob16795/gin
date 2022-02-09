@@ -5,13 +5,13 @@ import sdl2
 import sdl2/ttf
 import math
 import storage
-
+export sdl2.DisplayMode
 
 type
   Point* = object
     X*: cint
     Y*: cint
-  Rectangle* = object
+  Rectangle* = object of RootObj
     X*: cint
     Y*: cint
     Width*: cint
@@ -52,11 +52,44 @@ proc initGraphics*(data: GraphicsInitData): GraphicsContext =
   ttfInit()
   return result
 
+proc setFullscreen*(value: bool) =
+  if value:
+    discard setFullscreen(context.window, 1)
+  else:
+    discard setFullscreen(context.window, 0)
+
+proc getDisplayModes*(): seq[DisplayMode] =
+  var display_mode_count = getNumDisplayModes(0)
+  if display_mode_count < 1:
+    echo "You dont have any screens"
+    quit(1)
+
+  var mode: DisplayMode
+  for i in 0..display_mode_count:
+    discard getDisplayMode(0, i, mode)
+    result &= mode
+
+proc setDisplayMode*(dm: var DisplayMode) =
+  discard setDisplayMode(context.window, addr dm)
+
 proc loadTexture*(image: string): Texture =
   var surface = loadBMP(getFullFilePath(image))
   if surface == nil:
     echo "Failed to load image " & image
     quit(1)
+  when defined(GinDebug):
+    echo "loaded " & image
+  result.texture = createTextureFromSurface(context.renderer, surface)
+  freeSurface(surface)
+
+proc loadTextureMem*(data: pointer, size: cint): Texture =
+  var rw = rwFromMem(data, size)
+  var surface = loadBMP_RW(rw, 0)
+  if surface == nil:
+    echo "Failed to load image"
+    quit(1)
+  when defined(GinDebug):
+    echo "loaded an image"
   result.texture = createTextureFromSurface(context.renderer, surface)
   freeSurface(surface)
 
@@ -67,6 +100,7 @@ proc draw*(tex: var Texture, srcRect: Rectangle, destRect: Rectangle, c: graphic
   discard setTextureColorMod(tex.texture, c.r, c.g, c.b)
   copyEx(context.renderer, tex.texture, addr src, addr dst, angle, nil)
   discard setTextureColorMod(tex.texture, 255, 255, 255)
+
 
 proc draw*(tex: var Texture, srcRect: Rectangle, destRect: Rectangle, angle: float32 = 0) =
   var
@@ -139,10 +173,10 @@ proc center*(r: Rectangle): Point =
   return initPoint(r.X + (r.Width / 2).cint, r.Y + (r.Height / 2).cint)
 
 proc distance*(a, b: Point): float =
-  var c: Point
-  c.X = a.X - b.X
-  c.Y = a.Y - b.Y
-  return sqrt((c.X * c.X + c.Y * c.Y).float)
+  var cx, cy: float32
+  cx = (a.X - b.X).float32
+  cy = (a.Y - b.Y).float32
+  return sqrt(cx * cx + cy * cy)
 
 proc renderText*(face: FontFace, pos: Point, text: string, fgc: Color) =
   try:
