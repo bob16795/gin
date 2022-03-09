@@ -16,6 +16,8 @@ var currentKeyboardState: KeyboardState
 var currentMouseState: MouseState
 var currentJoypadState: JoypadState
 var currentWindowSize: Point
+var currentKeyboardString: string
+var textMode: bool
 
 # returns true if the program should end
 proc processQuitEvents*(): bool =
@@ -30,6 +32,15 @@ proc processQuitEvents*(): bool =
       else:
         discard
 
+proc textModeStart*(startText: string = "") =
+  textMode = true
+  currentKeyboardString = startText
+  startTextInput()
+
+proc textModeEnd*() =
+  textMode = false
+  stopTextInput()
+
 proc processEvents*(): bool =
   currentKeyboardState.modifiers = getModState()
   var e: Event
@@ -38,11 +49,17 @@ proc processEvents*(): bool =
       of QuitEvent:
         return true
       of KeyDown:
-        if not currentKeyboardState.pressedkeys.contains(e.key.keysym.scancode):
-           currentKeyboardState.pressedkeys.add(e.key.keysym.scancode)
-           return
+        if textMode:
+          if e.key.keysym.scancode == SDL_SCANCODE_BACKSPACE:
+            if currentKeyboardString != "":
+              currentKeyboardString = currentKeyboardString[0..^2]
+          elif not currentKeyboardState.pressedkeys.contains(e.key.keysym.scancode):
+            currentKeyboardState.pressedkeys.add(e.key.keysym.scancode)
+            return
       of KeyUp:
-        if currentKeyboardState.pressedkeys.contains(e.key.keysym.scancode):
+        if textMode:
+          discard
+        elif currentKeyboardState.pressedkeys.contains(e.key.keysym.scancode):
           for i in 0..currentKeyboardState.pressedkeys.len():
             if (currentKeyboardState.pressedkeys[i] == e.key.keysym.scancode):
               currentKeyboardState.pressedkeys.del(i)
@@ -77,6 +94,8 @@ proc processEvents*(): bool =
       of WindowEvent:
         if e.window.event == WindowEvent_Resized:
           currentWindowSize = initPoint(e.window.data1, e.window.data2)
+      of TextInput:
+        currentKeyboardString &= e.text.text[0]
       else:
         discard
 
@@ -89,6 +108,12 @@ proc getKeyBoardState*(): KeyboardState =
 
 proc getMouseState*(): MouseState =
   return currentMouseState
+
+proc inTextMode*(): bool =
+    return textMode
+
+proc getTextString*(): string =
+    return currentKeyboardString
 
 proc getJoypadState*(): JoypadState =
   return currentJoypadState
