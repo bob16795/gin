@@ -53,9 +53,9 @@ proc processEvents*(): bool =
           if e.key.keysym.scancode == SDL_SCANCODE_BACKSPACE:
             if currentKeyboardString != "":
               currentKeyboardString = currentKeyboardString[0..^2]
-          elif not currentKeyboardState.pressedkeys.contains(e.key.keysym.scancode):
-            currentKeyboardState.pressedkeys.add(e.key.keysym.scancode)
-            return
+        elif not currentKeyboardState.pressedkeys.contains(e.key.keysym.scancode):
+          currentKeyboardState.pressedkeys.add(e.key.keysym.scancode)
+          return
       of KeyUp:
         if textMode:
           discard
