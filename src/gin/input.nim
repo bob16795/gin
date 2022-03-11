@@ -1,16 +1,20 @@
 import sdl2 except Point
 import graphics
+import sdl2/joystick
+import tables
 
 type
-    KeyboardState* = object
-      pressedkeys*: seq[Scancode]
-      modifiers*: Keymod
-    MouseState* = object
-      position*: Point
-      pressedButtons*: seq[uint8]
-    JoypadState* = object
-      axis*: seq[int]
-      pressedButtons*: seq[uint8]
+  KeyboardState* = object
+    pressedkeys*: seq[Scancode]
+    modifiers*: Keymod
+  MouseState* = object
+    position*: Point
+    pressedButtons*: seq[uint8]
+  JoypadState* = object
+    axis*: seq[int]
+    pressedButtons*: seq[uint8]
+
+var joystics: Table[int32, JoystickPtr]
 
 var currentKeyboardState: KeyboardState
 var currentMouseState: MouseState
@@ -53,7 +57,8 @@ proc processEvents*(): bool =
           if e.key.keysym.scancode == SDL_SCANCODE_BACKSPACE:
             if currentKeyboardString != "":
               currentKeyboardString = currentKeyboardString[0..^2]
-        elif not currentKeyboardState.pressedkeys.contains(e.key.keysym.scancode):
+        elif not currentKeyboardState.pressedkeys.contains(
+            e.key.keysym.scancode):
           currentKeyboardState.pressedkeys.add(e.key.keysym.scancode)
           return
       of KeyUp:
@@ -78,19 +83,27 @@ proc processEvents*(): bool =
               currentMouseState.pressedButtons.del(i)
               break
       of JoyAxisMotion:
-        while len(currentJoypadState.axis) < e.jaxis.axis.int:
+        while len(currentJoypadState.axis) < e.jaxis.axis.int + 1:
           currentJoypadState.axis.add(0)
         currentJoypadState.axis[e.jaxis.axis] = e.jaxis.value.int
       of JoyButtonDown:
         if not currentJoypadState.pressedButtons.contains(e.jbutton.button):
-           currentJoypadState.pressedButtons.add(e.jbutton.button)
-           return
+          currentJoypadState.pressedButtons.add(e.jbutton.button)
+          return
       of JoyButtonUp:
         if currentJoypadState.pressedButtons.contains(e.jbutton.button):
           for i in 0..currentJoypadState.pressedButtons.len():
             if (currentJoypadState.pressedButtons[i] == e.jbutton.button):
               currentJoypadState.pressedButtons.del(i)
               break
+      of JoyDeviceAdded:
+        joystics[e.jdevice.which] = joystickOpen(e.jdevice.which)
+        when defined(GinDebug):
+          echo "Joystick attached: " & $e.jdevice.which
+      of JoyDeviceRemoved:
+        joystickClose(joystics[e.jdevice.which])
+        when defined(GinDebug):
+          echo "Joystick removed: " & $e.jdevice.which
       of WindowEvent:
         if e.window.event == WindowEvent_Resized:
           currentWindowSize = initPoint(e.window.data1, e.window.data2)
@@ -100,6 +113,8 @@ proc processEvents*(): bool =
         discard
 
 proc initInput*(data: GraphicsInitData) =
+  for i in 0..numJoysticks():
+    joystics[i] = joystickOpen(i)
   currentKeyboardState.pressedkeys = @[]
   currentWindowSize = data.size
 
@@ -110,10 +125,10 @@ proc getMouseState*(): MouseState =
   return currentMouseState
 
 proc inTextMode*(): bool =
-    return textMode
+  return textMode
 
 proc getTextString*(): string =
-    return currentKeyboardString
+  return currentKeyboardString
 
 proc getJoypadState*(): JoypadState =
   return currentJoypadState
