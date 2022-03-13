@@ -14,8 +14,6 @@ type
 
 var internalStorage: Storage
 
-
-
 template Game*(gameTemplates: untyped): untyped =
   proc main() =
     var
