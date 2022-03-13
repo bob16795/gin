@@ -44,7 +44,8 @@ proc Rect(r: Rectangle): Rect =
   result.h = r.Height
 
 proc initGraphics*(data: GraphicsInitData): GraphicsContext =
-  result.window = createWindow(data.name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, data.size.X, data.size.Y, SDL_WINDOW_RESIZABLE)
+  result.window = createWindow(data.name, SDL_WINDOWPOS_UNDEFINED,
+      SDL_WINDOWPOS_UNDEFINED, data.size.X, data.size.Y, SDL_WINDOW_RESIZABLE)
 
   result.renderer = createRenderer(result.window, -1, 0)
   discard setDrawBlendMode(result.renderer, BLENDMODE_BLEND);
@@ -93,7 +94,8 @@ proc loadTextureMem*(data: pointer, size: cint): Texture =
   result.texture = createTextureFromSurface(context.renderer, surface)
   freeSurface(surface)
 
-proc draw*(tex: var Texture, srcRect: Rectangle, destRect: Rectangle, c: graphics.Color, angle: float32 = 0) =
+proc draw*(tex: var Texture, srcRect: Rectangle, destRect: Rectangle,
+    c: graphics.Color, angle: float32 = 0) =
   var
     src = srcRect.Rect
     dst = destRect.Rect
@@ -102,7 +104,8 @@ proc draw*(tex: var Texture, srcRect: Rectangle, destRect: Rectangle, c: graphic
   discard setTextureColorMod(tex.texture, 255, 255, 255)
 
 
-proc draw*(tex: var Texture, srcRect: Rectangle, destRect: Rectangle, angle: float32 = 0) =
+proc draw*(tex: var Texture, srcRect: Rectangle, destRect: Rectangle,
+    angle: float32 = 0) =
   var
     src = srcRect.Rect
     dst = destRect.Rect
@@ -131,6 +134,10 @@ proc initRectangle*(position, size: Point): Rectangle =
 proc size*(r: Rectangle): Point =
   result.X = r.Width
   result.Y = r.Height
+
+proc `size=`*(r: var Rectangle, size: Point) =
+  r.Width = size.X
+  r.Height = size.Y
 
 proc offset*(r: Rectangle, offset: Point): Rectangle =
   result.X = r.X + offset.X
@@ -182,10 +189,10 @@ proc renderText*(face: FontFace, pos: Point, text: string, fgc: Color) =
   try:
     var
       fg = sdl2.color(fgc.r, fgc.g, fgc.b, fgc.a)
-      surface = renderTextBlended(face.fnt, text, fg)
+      surface = renderUtf8Blended(face.fnt, text, fg)
       texture = context.renderer.createTextureFromSurface(surface)
       tw, th: cint
-    discard face.fnt.sizeText(text, addr tw, addr th)
+    discard face.fnt.sizeUtf8(text, addr tw, addr th)
     var
       srcr = initRectangle(0, 0, tw, th).Rect
       dstr = initRectangle(pos, initPoint(tw, th)).Rect
@@ -194,10 +201,10 @@ proc renderText*(face: FontFace, pos: Point, text: string, fgc: Color) =
     destroy(texture)
   except: echo ":("
 
-proc sizeText*(face: FontFace,text: string): Point =
+proc sizeText*(face: FontFace, text: string): Point =
   var
     tw, th: cint
-  discard face.fnt.sizeText(text, addr tw, addr th)
+  discard face.fnt.sizeUtf8(text, addr tw, addr th)
   return initPoint(tw, th)
 
 proc initFontFace*(name: string, size: cint): FontFace =

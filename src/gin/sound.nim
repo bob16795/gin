@@ -110,12 +110,13 @@ proc createAudio*(filename: cstring, loop: uint8, volume: cint): ptr Audio =
     newAudio.fade = 0
     newAudio.free = 1
     newAudio.volume = volume.uint8
-    if loadWav($filename, addr newAudio.audio, addr newAudio.bufferTrue, addr newAudio.lengthTrue) == nil:
+    if loadWav($filename, addr newAudio.audio, addr newAudio.bufferTrue,
+            addr newAudio.lengthTrue) == nil:
         echo "wav couldnt be loaded: " & $filename
         discard newAudio.free
         return nil
     when defined(GinDebug):
-      echo "loaded " & $filename
+        echo "loaded " & $filename
     newAudio.buffer = newAudio.bufferTrue
     newAudio.length = newAudio.lengthTrue
     newAudio.audio.callback = nil
@@ -189,8 +190,10 @@ proc audioCallback(userdata: pointer, stream: ptr uint8, len: cint) {.cdecl.} =
                     tempLength = audio.length
                 else:
                     tempLength = cast[uint32](len)
-            mixAudioFormat(stream, audio.buffer, AUDIO_FORMAT, tempLength, audio.volume.cint)
-            audio.buffer = cast[ptr uint8](cast[int](audio.buffer) + tempLength.int)
+            mixAudioFormat(stream, audio.buffer, AUDIO_FORMAT, tempLength,
+                    audio.volume.cint)
+            audio.buffer = cast[ptr uint8](cast[int](audio.buffer) +
+                    tempLength.int)
             audio.length -= tempLength
             previous = audio
             audio = audio.next

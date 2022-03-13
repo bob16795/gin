@@ -77,7 +77,8 @@ template Game*(gameTemplates: untyped): untyped =
       if frameTime > now:
         delay(frameTime - now) # Delay to maintain steady frame rate
       frameTime += dt
-      var totalTime = frameTime - currentTime
+      var totalTime = getTicks() - currentTime
+      currentTime = getTicks()
 
       # run update everty dt mills
       # process keyboard events
@@ -92,6 +93,5 @@ template Game*(gameTemplates: untyped): untyped =
       # finish rendering
       renderFinish()
 
-      currentTime = frameTime
     Close()
   main()
