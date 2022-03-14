@@ -61,6 +61,8 @@ template Game*(gameTemplates: untyped): untyped =
       if processQuitEvents(): endLoop
       drawLoading(pc, loadStatus)
       renderFinish()
+      when defined(GinDebug):
+        echo "loaded " & $(pc * 100).int & "% - " & loadStatus
     template setStatus(status: string): untyped =
       loadStatus = status
       if processQuitEvents(): endLoop
