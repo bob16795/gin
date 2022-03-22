@@ -7,6 +7,7 @@ import os
 import asyncdispatch
 export asyncdispatch
 import sdl2/joystick
+import typetraits
 
 type
   Storage = object
@@ -94,4 +95,10 @@ template Game*(gameTemplates: untyped): untyped =
       renderFinish()
 
     Close()
-  main()
+  try:
+    main()
+  except Exception as e:
+    discard showSimpleMessageBox(0, "Error",
+        (e.getStackTrace(
+      ) & "Error: unhandled exception: " & e.msg & "\x0A[" & $e.type.name &
+          ": ObjectType]").cstring, nil)
