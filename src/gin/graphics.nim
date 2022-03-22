@@ -84,8 +84,8 @@ proc loadTexture*(image: string): Texture =
   freeSurface(surface)
 
 proc loadTextureMem*(data: pointer, size: cint): Texture =
-  var rw = rwFromMem(data, size)
-  var surface = loadBMP_RW(rw, 0)
+  var rw = rwFromConstMem(data, size)
+  var surface = loadBMP_RW(rw, 1)
   if surface == nil:
     echo "Failed to load image"
     quit(1)
@@ -153,7 +153,7 @@ proc `location=`*(r: var Rectangle, p: Point) =
   r.X = p.X
   r.Y = p.Y
 
-proc initColor*(r, g, b, a: uint8): Color =
+proc initColor*(r, g, b: uint8, a: uint8 = 255): Color =
   result.r = r
   result.g = g
   result.b = b
@@ -192,12 +192,12 @@ proc renderText*(face: FontFace, pos: Point, text: string, fgc: Color) =
       surface = renderUtf8Blended(face.fnt, text, fg)
       texture = context.renderer.createTextureFromSurface(surface)
       tw, th: cint
+    freeSurface(surface)
     discard face.fnt.sizeUtf8(text, addr tw, addr th)
     var
       srcr = initRectangle(0, 0, tw, th).Rect
       dstr = initRectangle(pos, initPoint(tw, th)).Rect
     copy(context.renderer, texture, addr srcr, addr dstr)
-    freeSurface(surface)
     destroy(texture)
   except: echo ":("
 
@@ -210,6 +210,15 @@ proc sizeText*(face: FontFace, text: string): Point =
 proc initFontFace*(name: string, size: cint): FontFace =
   result.fnt = openFont(getFullFilePath(name), size)
   result.size = size
+  result.valid = true
+
+proc initFontFaceMem*(data: pointer, size: cint, fontsize: cint): FontFace =
+  var rw = rwFromConstMem(data, size)
+  result.fnt = openFontRw(rw, 1, fontsize)
+  if result.fnt == nil:
+    echo "Failed to load font"
+    quit(1)
+  result.size = fontsize
   result.valid = true
 
 proc `+`*(A, B: Point): Point =

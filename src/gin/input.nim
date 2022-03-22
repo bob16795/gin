@@ -130,6 +130,9 @@ proc inTextMode*(): bool =
 proc getTextString*(): string =
   return currentKeyboardString
 
+proc setTextString*(s: string) =
+  currentKeyboardString = s
+
 proc getJoypadState*(): JoypadState =
   return currentJoypadState
 

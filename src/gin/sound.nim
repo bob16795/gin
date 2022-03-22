@@ -123,6 +123,31 @@ proc createAudio*(filename: cstring, loop: uint8, volume: cint): ptr Audio =
     newAudio.audio.userdata = nil
     return newAudio
 
+proc createAudioMem*(data: pointer, size: cint, loop: uint8,
+        volume: cint): ptr Audio =
+    var rw = rwFromConstMem(data, size)
+    var newAudio: ptr Audio = cast[ptr Audio](alloc(sizeof(Audio)))
+    if newAudio == nil:
+        echo "couldnt load audio"
+        return nil
+    newAudio.next = nil
+    newAudio.loop = loop
+    newAudio.fade = 0
+    newAudio.free = 1
+    newAudio.volume = volume.uint8
+    if loadWavRW(rw, 1, addr newAudio.audio, addr newAudio.bufferTrue,
+            addr newAudio.lengthTrue) == nil:
+        echo "wav couldnt be loaded"
+        discard newAudio.free
+        return nil
+    when defined(GinDebug):
+        echo "loaded"
+    newAudio.buffer = newAudio.bufferTrue
+    newAudio.length = newAudio.lengthTrue
+    newAudio.audio.callback = nil
+    newAudio.audio.userdata = nil
+    return newAudio
+
 proc playAudio(filename: cstring, audio: ptr Audio, loop: uint8, volume: cint) =
     var newAudio: ptr Audio
     if gDevice.audioEnable == 0:
