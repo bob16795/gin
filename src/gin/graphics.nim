@@ -60,18 +60,25 @@ proc setFullscreen*(value: bool) =
     discard setFullscreen(context.window, 0)
 
 proc getDisplayModes*(): seq[DisplayMode] =
-  var display_mode_count = getNumDisplayModes(0)
+  var idx = getDisplayIndex(context.window)
+  var display_mode_count = getNumDisplayModes(idx)
   if display_mode_count < 1:
     echo "You dont have any screens"
     quit(1)
 
   var mode: DisplayMode
   for i in 0..display_mode_count:
-    discard getDisplayMode(0, i, mode)
+    discard getDisplayMode(idx, i, mode)
     result &= mode
 
 proc setDisplayMode*(dm: var DisplayMode) =
   discard setDisplayMode(context.window, addr dm)
+
+proc getDisplayMode*(): DisplayMode =
+  var dm: DisplayMode
+  var idx = getDisplayIndex(context.window)
+  discard getCurrentDisplayMode(idx, dm)
+  return dm
 
 proc loadTexture*(image: string): Texture =
   var surface = loadBMP(getFullFilePath(image))
