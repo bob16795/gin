@@ -10,6 +10,7 @@ type
   MouseState* = object
     position*: Point
     pressedButtons*: seq[uint8]
+    wheelAccel*: int
   JoypadState* = object
     axis*: seq[int]
     pressedButtons*: seq[uint8]
@@ -61,6 +62,8 @@ proc processEvents*(): bool =
             e.key.keysym.scancode):
           currentKeyboardState.pressedkeys.add(e.key.keysym.scancode)
           return
+      of MouseWheel:
+        currentMouseState.wheelAccel = e.wheel.y
       of KeyUp:
         if textMode:
           discard

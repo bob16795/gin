@@ -86,10 +86,14 @@ template Game*(gameTemplates: untyped): untyped =
       if processEvents(): endLoop
 
       # run the update template in the game file
-      Update(totalTime)
+      block update:
+        template endUpdate() = break update
+        Update(totalTime)
 
       # run the draw template in the game file
-      Draw(totalTime, context)
+      block draw:
+        template endDraw() = break draw
+        Draw(totalTime, context)
 
       # finish rendering
       renderFinish()
