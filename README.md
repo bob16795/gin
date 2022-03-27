@@ -3,6 +3,6 @@ a game engine written in nim
 
 # games written in gin
 
-[sleep to defend](prestosilver.itch.io/sleep-to-defend)
+[sleep to defend](http://prestosilver.itch.io/sleep-to-defend)
 
-[the grand finale](prestosilver.itch.io/finale)
+[the grand finale](http://prestosilver.itch.io/finale)
