@@ -141,7 +141,7 @@ proc createAudioMem*(data: pointer, size: cint, loop: uint8,
         discard newAudio.free
         return nil
     when defined(GinDebug):
-        echo "loaded"
+        echo "loaded audio"
     newAudio.buffer = newAudio.bufferTrue
     newAudio.length = newAudio.lengthTrue
     newAudio.audio.callback = nil
