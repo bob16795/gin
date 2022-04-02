@@ -7,6 +7,13 @@ import math
 import storage
 export sdl2.DisplayMode
 
+export
+  TTF_STYLE_NORMAL,
+  TTF_STYLE_BOLD,
+  TTF_STYLE_ITALIC,
+  TTF_STYLE_UNDERLINE,
+  TTF_STYLE_STRIKETHROUGH
+
 type
   Point* = object
     X*: cint
@@ -218,6 +225,9 @@ proc initFontFace*(name: string, size: cint): FontFace =
   result.fnt = openFont(getFullFilePath(name), size)
   result.size = size
   result.valid = true
+
+proc setStyle*(face: var FontFace, style: cint) =
+  face.fnt.setFontStyle(style)
 
 proc initFontFaceMem*(data: pointer, size: cint, fontsize: cint): FontFace =
   var rw = rwFromConstMem(data, size)
