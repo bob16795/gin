@@ -36,6 +36,12 @@ proc distance*(a, b: Vector): float =
   c.Y = a.Y - b.Y
   return sqrt((c.X * c.X + c.Y * c.Y).float)
 
+proc mag*(v: Vector): float =
+  return distance(v, initVector(0, 0))
+
+proc norm*(v: Vector): Vector =
+  return v / v.mag()
+
 proc angle*(p: Vector): float32 =
   return arctan2(p.Y, p.X)
 
